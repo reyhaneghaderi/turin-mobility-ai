@@ -2,6 +2,8 @@
 
 An end-to-end Data & GenAI prototype that combines Turin traffic and parking data with official mobility documents to answer natural-language questions.
 
+🔗 **Live Demo:** [turin-mobility-ai-assistant.streamlit.app](https://turin-mobility-ai-assistant.streamlit.app)
+
 ## Business Problem
 
 Mobility information is spread across different sources. A driver may need to check traffic, parking availability, parking rules, ZTL access, and vehicle restrictions before making a simple decision.
