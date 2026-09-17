@@ -1,0 +1,10 @@
+streamlit
+python-dotenv
+openai
+psycopg2-binary
+sentence-transformers
+scikit-learn
+numpy
+pandas
+pypdf
+tiktoken
