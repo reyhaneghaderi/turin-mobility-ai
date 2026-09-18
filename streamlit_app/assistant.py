@@ -25,16 +25,27 @@ conn = psycopg2.connect(
     port=os.getenv("DB_PORT")
 )
 
-chunks_df = pd.read_csv(
-    r"C:\Users\reyha\Desktop\turin-mobility-ai\data\rag\chunks.csv"
-    
+base_dir = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
 )
 
-
-
-all_embeddings = np.load(
-    r"C:\Users\reyha\Desktop\turin-mobility-ai\data\rag\embeddings.npy"
+chunks_path = os.path.join(
+    base_dir,
+    "data",
+    "rag",
+    "chunks.csv"
 )
+
+embeddings_path = os.path.join(
+    base_dir,
+    "data",
+    "rag",
+    "embeddings.npy"
+)
+
+chunks_df = pd.read_csv(chunks_path)
+
+all_embeddings = np.load(embeddings_path)
 
 model = SentenceTransformer(
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
