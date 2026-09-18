@@ -101,6 +101,19 @@ st.markdown(
         font-weight: 750 !important;
     }}
 
+
+    /* Demo limitation note */
+    .demo-note {{
+        font-size: 12px !important;
+        font-weight: 400 !important;
+        color: #555555 !important;
+        line-height: 1.5 !important;
+        margin-top: 25px !important;
+        padding-top: 10px !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.15);
+        font-style: italic;
+    }}
+
     </style>
     """,
     unsafe_allow_html=True
@@ -147,16 +160,14 @@ with left_col:
         """
 🚗 **Parking / Parcheggi**
 
-• Quale parcheggio ha più posti liberi?
-• Which parking has the most free spaces?  
-
+• Quale parcheggio ha più posti liberi?  
+• Which parking has the most free spaces?
 
 
 🚦 **Traffic / Traffico**
 
-• Qual è la velocità media del traffico?
-• What is the average traffic speed?  
-
+• Qual è la velocità media del traffico?  
+• What is the average traffic speed?
 """
     )
 
@@ -167,20 +178,16 @@ with right_col:
         """
 📄 **Rules & ZTL / Regole e ZTL**
 
-• Quanto costa la sosta nella ZTL?
-• How much does parking cost in the ZTL?  
-
+• Quanto costa la sosta nella ZTL?  
+• How much does parking cost in the ZTL?
 
 
 🔄 **Combined / Domande combinate**
 
-• Quanto costa la sosta nella ZTL e qual è la velocità media del traffico?
-• How much does parking cost in the ZTL and what is the average traffic speed?  
-
+• Quanto costa la sosta nella ZTL e qual è la velocità media del traffico?  
+• How much does parking cost in the ZTL and what is the average traffic speed?
 """
     )
-
-
 
 
 # --------------------------------------------------
@@ -195,7 +202,10 @@ if question:
     st.subheader("Answer / Risposta")
 
 
+    # --------------------------------------------------
     # One simple database value
+    # --------------------------------------------------
+
     if (
         isinstance(answer, list)
         and len(answer) == 1
@@ -219,7 +229,10 @@ if question:
             st.write(value)
 
 
+    # --------------------------------------------------
     # Multiple database rows
+    # --------------------------------------------------
+
     elif (
         isinstance(answer, list)
         and len(answer) > 0
@@ -233,7 +246,35 @@ if question:
         )
 
 
+    # --------------------------------------------------
     # RAG / BOTH / normal text answer
+    # --------------------------------------------------
+
     else:
 
         st.write(answer)
+
+
+    # --------------------------------------------------
+    # Demo API limitation note
+    # --------------------------------------------------
+
+    st.markdown(
+        """
+        <div class="demo-note">
+
+        ⚠️ <b>Demo note / Nota sulla demo:</b><br>
+
+        This prototype uses a free-tier LLM API with limited daily requests.
+        If the daily limit is reached, AI responses may be temporarily unavailable.
+
+        <br><br>
+
+        Questo prototipo utilizza un'API LLM gratuita con un numero limitato
+        di richieste giornaliere. Se il limite giornaliero viene raggiunto,
+        le risposte AI potrebbero essere temporaneamente non disponibili.
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
