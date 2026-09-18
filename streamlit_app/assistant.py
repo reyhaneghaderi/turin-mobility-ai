@@ -17,13 +17,10 @@ client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=api_key
 )
-conn = psycopg2.connect(
-    dbname=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    host=os.getenv("DB_HOST"),
-    port=os.getenv("DB_PORT")
-)
+database_url = os.getenv("DATABASE_URL")
+
+conn = psycopg2.connect(database_url)
+
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
