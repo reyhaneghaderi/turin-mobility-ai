@@ -9,9 +9,19 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+
+# --------------------------------------------------
+# Environment variables
+# --------------------------------------------------
+
 load_dotenv()
 
 api_key = os.getenv("OPENROUTER_API_KEY")
+
+
+# --------------------------------------------------
+# OpenRouter client
+# --------------------------------------------------
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
@@ -19,15 +29,29 @@ client = OpenAI(
 )
 
 
-conn = psycopg2.connect(
-    dbname=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    host=os.getenv("DB_HOST"),
-    port=os.getenv("DB_PORT"),
-    sslmode="require"
-)
+# --------------------------------------------------
+# PostgreSQL connection
+# --------------------------------------------------
+# Create a NEW connection whenever a database
+# question is received.
+# This avoids stale connections in Streamlit Cloud.
+# --------------------------------------------------
 
+def get_db_connection():
+
+    return psycopg2.connect(
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        sslmode="require"
+    )
+
+
+# --------------------------------------------------
+# Project paths
+# --------------------------------------------------
 
 base_dir = os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -47,13 +71,28 @@ embeddings_path = os.path.join(
     "embeddings.npy"
 )
 
+
+# --------------------------------------------------
+# Load RAG data
+# --------------------------------------------------
+
 chunks_df = pd.read_csv(chunks_path)
 
 all_embeddings = np.load(embeddings_path)
 
+
+# --------------------------------------------------
+# Embedding model
+# --------------------------------------------------
+
 model = SentenceTransformer(
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
+
+
+# --------------------------------------------------
+# Router
+# --------------------------------------------------
 
 def choose_tool(question):
 
@@ -100,6 +139,11 @@ UNKNOWN
     decision = response.choices[0].message.content.strip()
 
     return decision
+
+
+# --------------------------------------------------
+# PostgreSQL / Natural-language-to-SQL tool
+# --------------------------------------------------
 
 def data_tool(question):
 
@@ -158,7 +202,29 @@ Question:
     sql = sql.replace("```", "")
     sql = sql.strip()
 
+
+    # --------------------------------------------------
+    # Basic SQL safety check
+    # --------------------------------------------------
+
+    if not (
+        sql.upper().startswith("SELECT")
+        or sql.upper().startswith("WITH")
+    ):
+
+        return "Database error: Only SELECT or WITH queries are allowed."
+
+
+    # --------------------------------------------------
+    # Fresh database connection for each request
+    # --------------------------------------------------
+
+    conn = None
+    cursor = None
+
     try:
+
+        conn = get_db_connection()
 
         cursor = conn.cursor()
 
@@ -171,8 +237,6 @@ Question:
             for column in cursor.description
         ]
 
-        cursor.close()
-
         data = [
             dict(zip(columns, row))
             for row in rows
@@ -180,11 +244,43 @@ Question:
 
         return data
 
+
     except Exception as e:
 
-        conn.rollback()
+        if conn is not None:
+
+            try:
+                conn.rollback()
+
+            except Exception:
+                pass
 
         return f"Database error: {e}"
+
+
+    finally:
+
+        if cursor is not None:
+
+            try:
+                cursor.close()
+
+            except Exception:
+                pass
+
+
+        if conn is not None:
+
+            try:
+                conn.close()
+
+            except Exception:
+                pass
+
+
+# --------------------------------------------------
+# Document semantic search
+# --------------------------------------------------
 
 def search_documents(question):
 
@@ -206,6 +302,10 @@ def search_documents(question):
 
     return top_results
 
+
+# --------------------------------------------------
+# RAG prompt
+# --------------------------------------------------
 
 def build_prompt(question, context):
 
@@ -234,6 +334,10 @@ Question:
     return prompt
 
 
+# --------------------------------------------------
+# Document question answering
+# --------------------------------------------------
+
 def answer_question(question):
 
     top_results = search_documents(question)
@@ -242,7 +346,10 @@ def answer_question(question):
         top_results["text"].tolist()
     )
 
-    prompt = build_prompt(question, context)
+    prompt = build_prompt(
+        question,
+        context
+    )
 
     response = client.chat.completions.create(
         model="openrouter/free",
@@ -256,7 +363,12 @@ def answer_question(question):
 
     answer = response.choices[0].message.content
 
-    return answer   
+    return answer
+
+
+# --------------------------------------------------
+# Split BOTH question
+# --------------------------------------------------
 
 def split_question(question):
 
@@ -306,26 +418,53 @@ DATA: ...
         .strip()
     )
 
-    return document_question, data_question     
+    return document_question, data_question
+
+
+# --------------------------------------------------
+# Main agent
+# --------------------------------------------------
 
 def run_agent(question):
 
     decision = choose_tool(question)
 
+
+    # --------------------------------------------------
+    # DOCUMENT
+    # --------------------------------------------------
+
     if decision == "DOCUMENT":
 
         answer = answer_question(question)
+
+
+    # --------------------------------------------------
+    # DATA
+    # --------------------------------------------------
 
     elif decision == "DATA":
 
         answer = data_tool(question)
 
+
+    # --------------------------------------------------
+    # BOTH
+    # --------------------------------------------------
+
     elif decision == "BOTH":
 
-        document_question, data_question = split_question(question)
+        document_question, data_question = split_question(
+            question
+        )
 
-        document_answer = answer_question(document_question)
-        data_answer = data_tool(data_question)
+        document_answer = answer_question(
+            document_question
+        )
+
+        data_answer = data_tool(
+            data_question
+        )
 
         prompt = f"""
 Answer the original question using both results.
@@ -356,12 +495,26 @@ Answer in the same language as the original question.
 
         answer = response.choices[0].message.content
 
+
+    # --------------------------------------------------
+    # UNKNOWN
+    # --------------------------------------------------
+
     elif decision == "UNKNOWN":
 
-        answer = "I do not have information to answer this question."
+        answer = (
+            "I do not have information "
+            "to answer this question."
+        )
+
+
+    # --------------------------------------------------
+    # Unexpected router response
+    # --------------------------------------------------
 
     else:
 
         answer = "I cannot answer this question."
+
 
     return answer
