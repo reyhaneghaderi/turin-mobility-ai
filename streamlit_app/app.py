@@ -101,6 +101,27 @@ st.markdown(
         font-weight: 750 !important;
     }}
 
+
+    /* Demo note */
+    .demo-note {{
+        margin-top: 35px;
+        margin-bottom: 15px;
+        font-size: 11px !important;
+        font-weight: 400 !important;
+        color: #000000 !important;
+        line-height: 1.5 !important;
+    }}
+
+    .demo-note * {{
+        font-size: 11px !important;
+        font-weight: 400 !important;
+        color: #000000 !important;
+    }}
+
+    .demo-note strong {{
+        font-weight: 700 !important;
+    }}
+
     </style>
     """,
     unsafe_allow_html=True
@@ -268,7 +289,7 @@ Nessun dato trovato per questa domanda.
 
 
     # --------------------------------------------------
-    # Friendly error message
+    # Short friendly error message
     # --------------------------------------------------
 
     except Exception as e:
@@ -277,25 +298,13 @@ Nessun dato trovato per questa domanda.
 
         st.error(
             """
-The service is temporarily unavailable.
+The service is temporarily unavailable. Please try again later.
 
-This may happen because of the free API usage limit
-or a temporary database connection problem.
-
-Please try again later.
-
----
-
-Il servizio è temporaneamente non disponibile.
-
-Questo può accadere a causa del limite dell'API gratuita
-o di un problema temporaneo di connessione al database.
-
-Riprova più tardi.
+Il servizio è temporaneamente non disponibile. Riprova più tardi.
 """
         )
 
-        # Technical error only in Streamlit logs
+        # Technical error appears only in Streamlit logs
         print(
             f"Turin Mobility AI error: {type(e).__name__}: {e}"
         )
@@ -303,25 +312,21 @@ Riprova più tardi.
 
 # --------------------------------------------------
 # Demo limitation note
-# Normal small text at the bottom of the page
 # --------------------------------------------------
 
 st.markdown(
     """
-<div style="
-    margin-top: 35px;
-    margin-bottom: 15px;
-    font-size: 11px !important;
-    font-weight: 400 !important;
-    color: #000000 !important;
-    line-height: 1.5;
-">
-⚠️ <strong>Demo note / Nota sulla demo:</strong><br>
-This prototype uses a free-tier LLM API with limited daily requests.
-If the limit is reached, AI responses may be temporarily unavailable.<br>
-Questo prototipo utilizza un'API LLM gratuita con un limite giornaliero di richieste.
-Se il limite viene raggiunto, le risposte AI potrebbero essere temporaneamente non disponibili.
-</div>
-""",
+    <div class="demo-note">
+
+    ⚠️ <strong>Demo note / Nota sulla demo:</strong><br>
+
+    This prototype uses a free-tier LLM API with limited daily requests.
+    If the limit is reached, AI responses may be temporarily unavailable.<br>
+
+    Questo prototipo utilizza un'API LLM gratuita con un limite giornaliero di richieste.
+    Se il limite viene raggiunto, le risposte AI potrebbero essere temporaneamente non disponibili.
+
+    </div>
+    """,
     unsafe_allow_html=True
 )
