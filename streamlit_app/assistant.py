@@ -1,5 +1,5 @@
 import os
-
+import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
 import psycopg2
@@ -17,7 +17,9 @@ client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=api_key
 )
-database_url = os.getenv("DATABASE_URL")
+
+
+database_url = st.secrets["DATABASE_URL"]
 
 conn = psycopg2.connect(database_url)
 
