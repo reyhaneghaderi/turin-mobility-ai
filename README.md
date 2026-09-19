@@ -48,11 +48,26 @@ The LLM is used for question routing, SQL generation, and final answer generatio
 
 ## Example Questions
 
-- How many free spaces are available at Porta Nuova?
-- What is the current traffic speed on Corso Francia?
-- How much does parking cost in the Central ZTL?
-- Are Diesel Euro 4 vehicles restricted?
-- Can I enter the ZTL and find available parking?
+- English: How much does parking cost per hour in the Central ZTL?
+- Italian: Quanto costa il parcheggio all'ora nella ZTL Centrale?
+- English: What are the normal hours for paid parking in Turin?
+- Italian: Quali sono gli orari normali della sosta a pagamento a Torino?
+- English: Can motorcycles park in blue parking spaces without displaying a permit?
+- Italian: Le moto possono parcheggiare nelle strisce blu senza esporre un contrassegno?
+- English: When are Euro 3 and Euro 4 diesel vehicles restricted from driving in Turin?
+- Italian: Quando è vietata la circolazione dei veicoli diesel Euro 3 ed Euro 4 a Torino?
+- English: Which vehicles are restricted all year, every day, from midnight to midnight?
+- Italian: Quali veicoli sono soggetti a limitazioni tutto l'anno, tutti i giorni, dalle 0 alle 24?
+- English: Which parking has the highest occupancy rate?
+- Italian: Quale parcheggio ha il tasso di occupazione più alto?
+- English: Which parking has the largest total capacity?
+- Italian: Quale parcheggio ha la capacità totale più grande?
+- English: How many parking locations are currently active and how many are inactive?
+- Italian: Quanti parcheggi sono attualmente attivi e quanti sono inattivi?
+- English: What is the current average traffic speed across all measurement points?
+- Italian: Qual è la velocità media attuale del traffico in tutti i punti di misurazione?
+- English: Which roads have high traffic flow but low speed?
+- Italian: Quali strade hanno un flusso di traffico elevato ma una velocità bassa?
 
 ## Current Limitations
 
