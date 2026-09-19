@@ -56,11 +56,18 @@ The LLM is used for question routing, SQL generation, and final answer generatio
 
 ## Current Limitations
 
-- 3 documents in the RAG knowledge base
-- about 7 days of historical data
-- no predictive ML model yet
-- no dedicated vector database
-- no production deployment yet
+* **Limited RAG knowledge base:** The assistant currently uses only 3 Turin mobility documents, so questions outside this scope may not be answered.
+
+* **Limited historical data:** The PostgreSQL database currently contains about 7 days of traffic and parking history, which limits long-term trend analysis and forecasting.
+
+* **No predictive ML model yet:** The current system focuses on real-time data, analytics, RAG, and AI-assisted queries rather than traffic or parking prediction.
+
+* **No dedicated vector database:** Because the RAG knowledge base is still small, embeddings are searched directly using similarity search. A vector database could be added as the document collection grows.
+
+* **Dependence on external services:** Real-time traffic and parking data come from the **5T Torino Open Data APIs**, while AI responses use the **OpenRouter free LLM API**. Temporary downtime, rate limits, or service changes may affect availability.
+
+* **Prototype deployment:** The application is designed as a working portfolio prototype rather than a production-grade system. A production version would require stronger monitoring, testing, security, logging, and failure recovery.
+
 
 ## Tech Stack
 
