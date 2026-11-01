@@ -92,5 +92,5 @@ Python · Pandas · NumPy · PostgreSQL · SQL · Requests · XML · PyPDF · ti
 
 Reyhaneh Ghaderi Chermahini
 
-GitHub: https://github.com/reyhanehghaderi  
+GitHub: https://github.com/reyhaneghaderi  
 LinkedIn: https://linkedin.com/in/reyhanehghaderi
